@@ -99,5 +99,15 @@ const submitLogin = (eventTarget: string) => {
 };
 
 const loginWithGoogle = () => submitLogin('ctl00$mainContent$btnLogin');
-const loginWithFeID = () => submitLogin('ctl00$mainContent$btnloginFeId');
+
+// FeID không yêu cầu chọn campus — submit trực tiếp
+const loginWithFeID = () => {
+  const aspNetForm = document.querySelector<HTMLFormElement>('#aspnetForm');
+  const evTarget = document.getElementById('__EVENTTARGET') as HTMLInputElement;
+  const evArgument = document.getElementById('__EVENTARGUMENT') as HTMLInputElement;
+  if (evTarget) evTarget.value = 'ctl00$mainContent$btnloginFeId';
+  if (evArgument) evArgument.value = '';
+  if (aspNetForm) aspNetForm.submit();
+  else alert('Không tìm thấy form ASP.NET. Vui lòng tải lại trang.');
+};
 </script>

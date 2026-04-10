@@ -1,5 +1,8 @@
 import { createApp } from 'vue';
 import LoginView from '@/components/LoginView.vue';
+import StudentView from '@/components/StudentView.vue';
+import ThongbaoView from '@/components/ThongbaoView.vue';
+import ScheduleView from '@/components/ScheduleView.vue';
 import '@/assets/tailwind.css';
 
 export default defineContentScript({
@@ -22,14 +25,24 @@ export default defineContentScript({
     // 2. We are in the real portal, configure logic depending on route
     const path = window.location.pathname.toLowerCase();
     const isLoginPage = path === '/' || path === '/default.aspx';
+    const isStudentPage = path === '/student.aspx';
+    const isThongbaoPage = path === '/thongbao.aspx';
+
+    const isSchedulePage = path === '/report/scheduleofweek.aspx';
 
     if (isLoginPage && hasAspnetForm) {
-      await injectVueUI(ctx);
+      await injectVueUI(ctx, LoginView, 'fap-vue-auth');
+    } else if (isStudentPage && hasAspnetForm) {
+      await injectVueUI(ctx, StudentView, 'fap-vue-student');
+    } else if (isThongbaoPage && hasAspnetForm) {
+      await injectVueUI(ctx, ThongbaoView, 'fap-vue-thongbao');
+    } else if (isSchedulePage && hasAspnetForm) {
+      await injectVueUI(ctx, ScheduleView, 'fap-vue-schedule');
     }
   },
 });
 
-async function injectVueUI(ctx: any) {
+async function injectVueUI(ctx: any, component: any, uiName: string) {
   // Lấy trạng thái cài đặt từ chrome storage (nếu chưa có thì mặc định bật)
   let isCustomUIEnabled = (await storage.getItem<boolean>('local:fap_ui_enabled')) ?? true; 
 
@@ -39,7 +52,7 @@ async function injectVueUI(ctx: any) {
   }
 
   const ui = await createShadowRootUi(ctx, {
-    name: 'fap-vue-auth',
+    name: uiName,
     position: 'inline',
     anchor: 'body',
     onMount: (container) => {
@@ -76,7 +89,7 @@ async function injectVueUI(ctx: any) {
       wrapper.appendChild(toggleBtn);
 
       // Mount Vue
-      const app = createApp(LoginView);
+      const app = createApp(component);
       app.mount(appContainer);
       
       // Xử lý logic Click

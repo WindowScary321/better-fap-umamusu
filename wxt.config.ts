@@ -3,10 +3,13 @@ import tailwindcss from '@tailwindcss/vite';
 
 // See https://wxt.dev/api/config.html
 export default defineConfig({
-  runner: {
+  webExt: {
     binaries: {
-      chrome: 'C:\\Users\\tusieumap\\scoop\\apps\\ungoogled-chromium\\current\\chrome.exe'
-    }
+      chrome: 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe'
+    },
+    chromiumArgs: [
+      '--disable-blink-features=AutomationControlled',
+    ]
   },
   modules: ['@wxt-dev/module-vue'],
   vite: () => ({

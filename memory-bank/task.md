@@ -4,12 +4,13 @@
   - [x] Cài đặt pnpm và các dependency (vue-router, pinia, vue-query, vue-i18n).
   - [x] Thiết lập Tailwind CSS v4.
   - [x] Cấu hình `wxt.config.ts`.
-- [ ] Giai đoạn 2: Migration Lớp Chrome Extension
+- [/] Giai đoạn 2: Migration Lớp Chrome Extension
   - [ ] Tạo `entrypoints/content.ts` để capture HTML.
   - [ ] Cấu hình chạy Extension Layer.
 - [ ] Giai đoạn 3: Phục dựng Data Layer
   - [ ] Khởi tạo Store Pinia cho dữ liệu FAP.
   - [ ] Tạo composable xử lý scraping.
-- [ ] Giai đoạn 4: Re-write Ứng dụng gốc sang Vue UI
-  - [ ] ... (sẽ cập nhật sau)
+- [/] Giai đoạn 4: Re-write Ứng dụng gốc sang Vue UI
+  - [/] Tạo `LoginView.vue` tinh gọn với Logo, Campus và Login buttons.
+  - [ ] Tạo `DashboardView.vue` và `NotificationView.vue`.
 - [ ] Giai đoạn 5: Testing và Hoàn thiện

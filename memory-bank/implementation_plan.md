@@ -62,21 +62,31 @@ Khác quan trọng nhất là chuyển đổi `FapDataProvider` (React Context) 
 
 ---
 
-## Giai đoạn 4: Re-write Ứng dụng gốc sang Vue UI
+## Giai đoạn 4: Phân tích và Re-write Giao diện sang Vue UI
 
-### 4.1 Routing & Layout
-*   Cài đặt `vue-router`. Khởi tạo Layout Container (`Demo7Layout.vue` tương ứng) với Header, Footer, Toolbar.
-*   Thiết kế hệ thống Route: Route tới Dashbord, Route tới Grades, Lịch học, Đơn từ...
+Qua phân tích các file HTML gốc từ hệ thống ASP.NET (`fap-html/`), hệ thống UI mới bằng Vue cần nhắm đến cấu trúc sau:
 
-### 4.2 Thiết kế Component
-*   Chuyển các thành phần UI shadcn/ui hoặc Metronic sang dạng Vue Component (Ví dụ `TuitionAlert.vue`).
-*   Chuyển các thành phần biểu đồ/tuần sang ứng dụng tương đương của hệ sinh thái Vue.
-*   Thêm thư viện `v-calendar` (hoặc `vue-tailwind-datepicker`) để thay cho `react-calendar` bên bảng "Hoạt động sinh viên/Đặt phòng".
+### 4.1 Xử lý Form ASP.NET WebForms đặc thù (Quan trọng)
+*   Tất cả các trang gốc đều bọc trong `<form id="aspnetForm">` với các input ẩn cực kỳ quan trọng: `__VIEWSTATE`, `__VIEWSTATEGENERATOR`, `__EVENTVALIDATION`.
+*   **Giải pháp Vue**: Tại thẻ `<template>`, chúng ta không dùng `<form>` thông thường. Mọi thao tác submit (ví dụ: Đăng nhập, Chuyển cơ sở) sẽ được Vue gọi qua hàm giả lập `__doPostBack(eventTarget, eventArgument)` hoặc sử dụng JS Fetch API gửi POST request đi kèm các token ẩn trên.
 
-### 4.3 Đảm bảo Đa ngôn ngữ (i18n)
-*   Export toàn bộ file JSON ngôn ngữ bản gốc (hơn 346 keys).
-*   Đưa vào `vue-i18n`. 
-*   Trong SFC, gọi từ móc `$t('key')` tại thẻ template HTML.
+### 4.2 Thiết kế các View cốt lõi (Core Views)
+*   **Trang Login (`LoginView.vue`)**:
+    *   *Nguồn gốc*: `FPT University Academic Portal.html`
+    *   *Yêu cầu UI*: Một trang đăng nhập cực kỳ hiện đại (như thẻ Glassmorphism hoặc Split Layout đẹp mắt), thay thế cho 2 thẻ fieldset thô cứng.
+    *   *Logic*: Chứa Dropdown chọn cơ sở (`#ctl00_mainContent_ddlCampus`), 2 nút bấm là "Login With Google" và "Login With FeID". Khi bấm, kích hoạt `__doPostBack('ctl00$mainContent$btnLogin','')`.
+*   **Trang Dashboard (`DashboardView.vue`)**:
+    *   *Nguồn gốc*: `main-portal.html` (`/Student.aspx`)
+    *   *Yêu cầu UI*: Gom các mảng thông tin rời rạc như Bảng nội quy (Thủ tục - Hạn nộp đơn) và Tin tức làm thành các Widget/Card trực quan sử dụng Tailwind CSS.
+    *   *Logic*: Scrape thẻ chứa tên User `doanminhson05052006@gmail.com` (`#ctl00_lblLogIn`) và cơ sở (`#ctl00_lblCampusName`) truyền vào Store.
+*   **Trang Thông Báo (`NotificationView.vue`)**:
+    *   *Nguồn gốc*: `thongbao.html`
+    *   *Yêu cầu UI*: Hiển thị thông báo, lịch mở lớp học lại dạng thẻ List. Các bảng (`table.table-bordered`) cần được parser JSON hoá (`useFapSelector`) và render bằng component Bảng xịn xò có tính năng sort, lọc.
+
+### 4.3 Routing & UI Library
+*   Dùng `vue-router` ánh xạ các trang: `/` -> `LoginView`, `/Student` -> `DashboardView`, `/Thongbao` -> `NotificationView`.
+*   Tạo Layout chung (`DashboardLayout.vue`) với Sidebar/Navbar lơ lửng, chứa toàn bộ khung ứng dụng thay cho menu cổ điển.
+*   Đưa `vue-i18n` vào để xử lý Đa ngôn ngữ Anh/Việt. Lấy ra móc `$t()` trong thẻ template.
 
 ---
 

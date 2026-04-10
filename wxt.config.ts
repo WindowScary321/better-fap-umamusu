@@ -3,6 +3,11 @@ import tailwindcss from '@tailwindcss/vite';
 
 // See https://wxt.dev/api/config.html
 export default defineConfig({
+  runner: {
+    binaries: {
+      chrome: 'C:\\Users\\tusieumap\\scoop\\apps\\ungoogled-chromium\\current\\chrome.exe'
+    }
+  },
   modules: ['@wxt-dev/module-vue'],
   vite: () => ({
     plugins: [tailwindcss()],
